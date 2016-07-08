@@ -59,10 +59,8 @@ module.exports = function(wifi_manager, callback) {
     });
 
     app.post("/api/set_firebase_uid", function( request, response ) {
-        var jsonFileContent = `{"UID":${request.body.firebaseUid}}`;
-        console.log( jsonFileContent );
+        var jsonFileContent = `{"UID":"${request.body.firebaseUid}"}`;
         fs.writeFile('/home/pi/firebase-uid.json', jsonFileContent, (err) => {
-            console.log( 'wrote UID to file' );
             response.json( { success:true } );
         });
     });
