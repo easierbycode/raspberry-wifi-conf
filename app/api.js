@@ -4,6 +4,7 @@ var path       = require("path"),
     express    = require("express"),
     bodyParser = require('body-parser'),
     config     = require("../config.json"),
+    fs         = require('fs'),
     http_test  = config.http_test_only;
 
 // Helper function to log errors and send a generic status "SUCCESS"
@@ -60,6 +61,7 @@ module.exports = function(wifi_manager, callback) {
     app.post("/api/set_firebase_uid", function( request, response ) {
         fs.writeFile('~/firebase-uid.json', `{"UID":${request.body.firebaseUid}}`, (err) => {
             console.log( 'wrote UID to file' );
+            response.json( { success:true } );
         });
     });
 
