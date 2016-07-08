@@ -31,6 +31,14 @@ module.exports = function(wifi_manager, callback) {
     app.set("views", path.join(__dirname, "views"));
     app.set("trust proxy", true);
 
+    var allowCrossDomain = function(req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+      res.header('Access-Control-Allow-Headers', 'Content-Type');
+      next();
+    };
+    app.use(allowCrossDomain);
+
     // Setup static routes to public assets
     app.use(express.static(path.join(__dirname, "public")));
     app.use(bodyParser.json());
@@ -46,6 +54,12 @@ module.exports = function(wifi_manager, callback) {
         console.log("Server got /rescan_wifi");
         iwlist(function(error, result) {
             log_error_send_success_with(result[0], error, response);
+        });
+    });
+
+    app.post("/api/set_firebase_uid", function( request, response ) {
+        fs.writeFile('~/firebase-uid.json', `{"UID":${request.body.firebaseUid}}`, (err) => {
+            console.log( 'wrote UID to file' );
         });
     });
 
