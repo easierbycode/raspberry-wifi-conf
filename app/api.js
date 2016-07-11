@@ -5,6 +5,7 @@ var path       = require("path"),
     bodyParser = require('body-parser'),
     config     = require("../config.json"),
     fs         = require('fs'),
+    fork       = require('child_process').fork,
     http_test  = config.http_test_only;
 
 // Helper function to log errors and send a generic status "SUCCESS"
@@ -58,9 +59,12 @@ module.exports = function(wifi_manager, callback) {
         });
     });
 
+    var wifiSetupComplete = false;
     app.post("/api/set_firebase_uid", function( request, response ) {
         var jsonFileContent = `{"UID":"${request.body.firebaseUid}"}`;
         fs.writeFile('/home/pi/firebase-uid.json', jsonFileContent, (err) => {
+            if (!wifiSetupComplete)  fork('/home/pi/firebase-wifi-setup-complete');
+            wifiSetupComplete = true;
             response.json( { success:true } );
         });
     });
